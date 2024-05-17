@@ -37,7 +37,7 @@ return {
         trouble.toggle 'quickfix'
       end, { desc = '[T]oggle [Q]uickfix List' })
       vim.keymap.set('n', '<leader>td', function()
-        trouble.toggle 'workspace_diagnsotics'
+        trouble.toggle 'workspace_diagnostics'
       end, { desc = '[T]oggle [D]iagnsotics' })
       vim.keymap.set('n', '<leader>tl', function()
         trouble.toggle 'loclist'

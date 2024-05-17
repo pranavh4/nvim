@@ -74,10 +74,6 @@ return {
           --  the definition of its *type*, not where it was *defined*.
           map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
 
-          -- Fuzzy find all the symbols in your current document.
-          --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
           map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
@@ -89,10 +85,6 @@ return {
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
           map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-
-          -- Opens a popup that displays documentation about the word under your cursor
-          --  See `:help K` for why this keymap.
-          map('K', vim.lsp.buf.hover, 'Hover Documentation')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -158,7 +150,38 @@ return {
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        pyright = {},
+        pylsp = { -- Use pylsp only for viewing hover documentation and linting
+          on_attach = function(client, _)
+            client.server_capabilities.completionProvider = false
+            client.server_capabilities.definitionProvider = false
+            client.server_capabilities.documentFormattingProvider = false
+            client.server_capabilities.documentHighlightProvider = false
+            client.server_capabilities.documentRangeFormattingProvider = false
+            client.server_capabilities.documentSymbolProvider = false
+            client.server_capabilities.executeCommandProvider = false
+            client.server_capabilities.foldingRangeProvider = false
+            client.server_capabilities.referencesProvider = false
+            client.server_capabilities.renameProvider = false
+          end,
+          settings = {
+            pylsp = {
+              plugins = {
+                -- formatter options
+                autopep8 = { enabled = false },
+                -- linter options
+                pylint = { enabled = false },
+                pyflakes = { enabled = false },
+                pycodestyle = { enabled = false },
+              },
+            },
+          },
+        },
+        pyright = { -- Use pyright for everything else
+          on_attach = function(client, _)
+            client.server_capabilities.hoverProvider = false
+            client.server_capabilities.signatureHelpProvider = false
+          end,
+        },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --

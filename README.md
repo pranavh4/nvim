@@ -188,6 +188,16 @@ sudo apt install make gcc ripgrep unzip git xclip neovim
 </details>
 
 #### Linux Install
+
+<details><summary>Linux Install Stable Tar</summary>
+
+```
+sudo apt update
+sudo apt install make gcc ripgrep unzip git xclip
+wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz
+sudo tar -C /opt -xzf nvim-linux64.tar.gz
+```
+</details>
 <details><summary>Ubuntu Install Steps</summary>
 
 ```
