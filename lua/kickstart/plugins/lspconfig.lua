@@ -124,6 +124,8 @@ return {
           --
           -- This may be unwanted, since they displace some of your code
           if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+            vim.lsp.inlay_hint.enable(true) --Enable inlay hints by default
+
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
             end, '[T]oggle Inlay [H]ints')
@@ -176,11 +178,16 @@ return {
             },
           },
         },
-        pyright = { -- Use pyright for everything else
+        basedpyright = {
           on_attach = function(client, _)
             client.server_capabilities.hoverProvider = false
             client.server_capabilities.signatureHelpProvider = false
           end,
+          settings = {
+            basedpyright = {
+              typeCheckingMode = 'standard',
+            },
+          },
         },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
