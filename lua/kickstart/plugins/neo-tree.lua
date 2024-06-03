@@ -14,6 +14,7 @@ return {
     { '\\', ':Neotree reveal<CR>', { desc = 'NeoTree reveal' } },
   },
   opts = {
+    use_popups_for_input = false,
     auto_clean_after_session_restore = true,
     filesystem = {
       filtered_items = {
@@ -24,6 +25,12 @@ return {
         mappings = {
           ['\\'] = 'close_window',
           ['P'] = 'toggle_preview',
+          ['m'] = {
+            'move',
+            config = {
+              show_path = 'relative',
+            },
+          },
         },
       },
     },
