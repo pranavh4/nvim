@@ -14,7 +14,13 @@ return {
     'windwp/nvim-ts-autotag',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     config = function()
-      require('nvim-ts-autotag').setup()
+      require('nvim-ts-autotag').setup {
+        opts = {
+          enable_rename = true,
+          enable_close = true,
+          enable_close_on_slash = true,
+        },
+      }
     end,
     lazy = true,
     event = 'VeryLazy',
@@ -61,6 +67,18 @@ return {
     ft = { 'markdown' },
     build = function()
       vim.fn['mkdp#util#install']()
+    end,
+  },
+  { 'mfussenegger/nvim-jdtls', dependencies = { 'mfussenegger/nvim-dap' } },
+
+  {
+    'antosha417/nvim-lsp-file-operations',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-neo-tree/neo-tree.nvim',
+    },
+    config = function()
+      require('lsp-file-operations').setup()
     end,
   },
 }

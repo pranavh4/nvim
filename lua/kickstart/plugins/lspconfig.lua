@@ -60,10 +60,13 @@ return {
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          --  TODO: Change to use telescope once it has added support for jdtls
+          map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
 
           -- Find references for the word under your cursor.
-          -- map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gr', function()
+            require('trouble').toggle 'lsp_references'
+          end, { desc = '[G]oto [R]eferences' })
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
@@ -218,6 +221,8 @@ return {
             },
           },
         },
+
+        lemminx = {}, --xml language server
       }
 
       -- Ensure the servers and tools above are installed
@@ -239,11 +244,18 @@ return {
         'prettier', -- javascript
         'shfmt', -- bash
       })
+      -- jdtls for nvim-jdtls
+      vim.list_extend(ensure_installed, { 'jdtls' })
+
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
+            if server_name == 'jdtls' then --Don't setup jdtls as it will be done by nvim-jdtls
+              return
+            end
+
             local server = servers[server_name] or {}
 
             -- LSP settings (for overriding per client)

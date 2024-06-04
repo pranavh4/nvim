@@ -18,6 +18,7 @@ return { -- Highlight, edit, and navigate code
       'tsx',
       'json',
       'yaml',
+      'java',
     },
     -- Autoinstall languages that are not installed
     auto_install = true,
@@ -29,12 +30,6 @@ return { -- Highlight, edit, and navigate code
       additional_vim_regex_highlighting = { 'ruby' },
     },
     indent = { enable = true, disable = { 'ruby' } },
-    autotag = {
-      enable = true,
-      enable_rename = true,
-      enable_close = true,
-      enable_close_on_slash = true,
-    },
   },
   config = function(_, opts)
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
