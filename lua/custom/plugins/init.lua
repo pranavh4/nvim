@@ -48,9 +48,6 @@ return {
       vim.keymap.set('n', '<leader>tl', function()
         trouble.toggle 'loclist'
       end, { desc = '[T]oggle [L]ocal List' })
-      vim.keymap.set('n', 'tr', function()
-        trouble.toggle 'lsp_references'
-      end, { desc = '[T]oggle [R]eferences' })
     end,
   },
   {
