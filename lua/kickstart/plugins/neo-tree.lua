@@ -17,6 +17,7 @@ return {
     use_popups_for_input = false,
     auto_clean_after_session_restore = true,
     filesystem = {
+      group_empty_dirs = true,
       filtered_items = {
         visible = true,
         hide_dotfiles = false,

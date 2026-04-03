@@ -8,8 +8,9 @@ return {
       async = false,
       timeout_ms = 500,
     }
-    conform.formatters.shfmt = {
-      prepend_args = { '-i', '4' }, -- Indent 4 spaces
+    conform.formatters = {
+      pshfmt = { prepend_args = { '-i', '4' } }, -- Indent 4 spaces
+      black = { prepend_args = { '--line-length', '160' } },
     }
     conform.setup {
       formatters_by_ft = {
