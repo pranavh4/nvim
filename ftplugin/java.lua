@@ -30,25 +30,13 @@ local workspace_dir = home .. '/.local/share/nvim/jdtls-workspace/' .. project_n
 -- Bazel classpath helpers
 -------------------------------------------------------------------------------
 
--- Resolve the bazel external cache path from the execroot symlink
-local function bazel_external_cache(root)
-  local project_symlink = root .. '/bazel-' .. vim.fn.fnamemodify(root, ':t')
-  local execroot = vim.fn.resolve(project_symlink)
-  if execroot == project_symlink then
-    return nil
-  end
-  return vim.fn.fnamemodify(execroot, ':h:h') .. '/external'
-end
-
--- Collect header jars from bazel-bin (internal) and bazel cache (external deps)
+-- Collect header jars from bazel-bin (internal + external deps)
 local function collect_bazel_jars(root)
   local jars = {}
   local bazel_bin = vim.fn.resolve(root .. '/bazel-bin')
-  local cache_ext = bazel_external_cache(root)
 
-  local handle = io.popen(
-    'find ' .. bazel_bin .. ' -maxdepth 6 -name "*-hjar.jar"' .. ' -not -path "*/runfiles/*" -not -path "*/external/*" -not -path "*test*"' .. ' 2>/dev/null'
-  )
+  -- Internal hjars
+  local handle = io.popen('find ' .. bazel_bin .. ' -maxdepth 6 -name "*-hjar.jar"' .. ' -not -path "*/runfiles/*" -not -path "*/external/*"' .. ' 2>/dev/null')
   if handle then
     for jar in handle:read('*a'):gmatch '[^\n]+' do
       table.insert(jars, jar)
@@ -56,14 +44,13 @@ local function collect_bazel_jars(root)
     handle:close()
   end
 
-  if cache_ext then
-    handle = io.popen('find ' .. cache_ext .. ' -name "header_*.jar" -not -name "*sources*" 2>/dev/null')
-    if handle then
-      for jar in handle:read('*a'):gmatch '[^\n]+' do
-        table.insert(jars, jar)
-      end
-      handle:close()
+  -- External header jars (in bazel-bin/external, NOT in the cache)
+  handle = io.popen('find ' .. bazel_bin .. '/external -name "header_*.jar" -not -name "*sources*" 2>/dev/null')
+  if handle then
+    for jar in handle:read('*a'):gmatch '[^\n]+' do
+      table.insert(jars, jar)
     end
+    handle:close()
   end
 
   return jars
@@ -124,8 +111,7 @@ local config = {
     '-Declipse.product=org.eclipse.jdt.ls.core.product',
     '-Dlog.protocol=true',
     '-Dlog.level=ALL',
-    '-Xmx16g',
-    '-DwatchParentProcess=false',
+    '-Xmx24g',
     '--add-modules=ALL-SYSTEM',
     '--add-opens',
     'java.base/java.util=ALL-UNNAMED',
@@ -182,8 +168,6 @@ local config = {
       vim.keymap.set('n', keys, func, { buffer = bufnr, desc = 'LSP: ' .. desc })
     end
 
-    -- Direct request bypass — jdtls uses dynamic registration for definition,
-    -- which neovim 0.11 doesn't check in vim.lsp.buf.definition()
     map('gd', function()
       local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
       client:request('textDocument/definition', params, function(err, result)
