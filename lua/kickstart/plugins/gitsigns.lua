@@ -56,6 +56,16 @@ return {
         -- Toggles
         map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
         map('n', '<leader>tD', gitsigns.toggle_deleted, { desc = '[T]oggle git show [D]eleted' })
+        map('n', '<leader>tp', function()
+          local result = vim.fn.system('git rev-parse --abbrev-ref origin/HEAD'):gsub('%s+', '')
+          local base = result:match('origin/(.+)') or 'master'
+          gitsigns.change_base(base, true)
+          vim.notify('Gitsigns base: ' .. base, vim.log.levels.INFO)
+        end, { desc = '[T]oggle git [P]R diff base' })
+        map('n', '<leader>ti', function()
+          gitsigns.change_base(nil, true)
+          vim.notify('Gitsigns base: index', vim.log.levels.INFO)
+        end, { desc = '[T]oggle git [I]ndex diff base' })
       end,
     },
   },
